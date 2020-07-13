@@ -42,9 +42,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var bcryptjs_1 = require("bcryptjs");
 var jsonwebtoken_1 = require("jsonwebtoken");
-var User_1 = __importDefault(require("../infra/typeorm/entities/User"));
-var auth_1 = __importDefault(require("../../../config/auth"));
-var AppError_1 = __importDefault(require("../../../shared/errors/AppError"));
+var User_1 = __importDefault(require("@modules/users/infra/typeorm/entities/User"));
+var auth_1 = __importDefault(require("@config/auth"));
+var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var AuthenticateUserService = /** @class */ (function () {
     function AuthenticateUserService() {
     }

@@ -59,7 +59,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
-var Appointment_1 = __importDefault(require("../entities/Appointment"));
+var Appointment_1 = __importDefault(require("@modules/appointments/infra/typeorm/entities/Appointment"));
 var AppointmentsRepository = /** @class */ (function (_super) {
     __extends(AppointmentsRepository, _super);
     function AppointmentsRepository() {

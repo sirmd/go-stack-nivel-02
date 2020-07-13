@@ -41,7 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var date_fns_1 = require("date-fns");
 var typeorm_1 = require("typeorm");
-var AppointmentsRepository_1 = __importDefault(require("../infra/typeorm/repositories/AppointmentsRepository"));
+var AppointmentsRepository_1 = __importDefault(require("@modules/appointments/infra/typeorm/repositories/AppointmentsRepository"));
 var AppError_1 = __importDefault(require("../../../shared/errors/AppError"));
 var CreateAppointmentService = /** @class */ (function () {
     function CreateAppointmentService() {

@@ -40,47 +40,42 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = require("express");
-var multer_1 = __importDefault(require("multer"));
-var CreateUserService_1 = __importDefault(require("../../../../modules/users/services/CreateUserService"));
-var UpdateUserAvatarService_1 = __importDefault(require("../../../../modules/users/services/UpdateUserAvatarService"));
-var upload_1 = __importDefault(require("../../../../config/upload"));
-var ensureAuthenticated_1 = __importDefault(require("../middlewares/ensureAuthenticated"));
-var usersRouter = express_1.Router();
-var upload = multer_1.default(upload_1.default);
-usersRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, email, password, createUser, user;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
-                createUser = new CreateUserService_1.default();
-                return [4 /*yield*/, createUser.execute({
-                        name: name,
-                        email: email,
-                        password: password,
-                    })];
-            case 1:
-                user = _b.sent();
-                delete user.password;
-                return [2 /*return*/, response.json(user)];
-        }
-    });
-}); });
-usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
-    var updateUserAvatar, user;
+var date_fns_1 = require("date-fns");
+var typeorm_1 = require("typeorm");
+var AppointmentsRepository_1 = __importDefault(require("@modules/appointments/infra/typeorm/repositories/AppointmentsRepository"));
+var CreateAppointmentService_1 = __importDefault(require("@modules/appointments/services/CreateAppointmentService"));
+var ensureAuthenticated_1 = __importDefault(require("@modules/users/infra/http/middlewares/ensureAuthenticated"));
+var appointmentsRouter = express_1.Router();
+appointmentsRouter.use(ensureAuthenticated_1.default);
+appointmentsRouter.get('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var appointmentsRepository, appointments;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                updateUserAvatar = new UpdateUserAvatarService_1.default();
-                return [4 /*yield*/, updateUserAvatar.execute({
-                        user_id: request.user.id,
-                        avatarFilename: request.file.filename,
-                    })];
+                appointmentsRepository = typeorm_1.getCustomRepository(AppointmentsRepository_1.default);
+                return [4 /*yield*/, appointmentsRepository.find()];
             case 1:
-                user = _a.sent();
-                delete user.password;
-                return [2 /*return*/, response.json(user)];
+                appointments = _a.sent();
+                return [2 /*return*/, response.json(appointments)];
         }
     });
 }); });
-exports.default = usersRouter;
+appointmentsRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, provider_id, date, parsedDate, createAppointment, appointment;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = request.body, provider_id = _a.provider_id, date = _a.date;
+                parsedDate = date_fns_1.parseISO(date);
+                createAppointment = new CreateAppointmentService_1.default();
+                return [4 /*yield*/, createAppointment.execute({
+                        date: parsedDate,
+                        provider_id: provider_id,
+                    })];
+            case 1:
+                appointment = _b.sent();
+                return [2 /*return*/, response.json(appointment)];
+        }
+    });
+}); });
+exports.default = appointmentsRouter;

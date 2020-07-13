@@ -42,9 +42,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var typeorm_1 = require("typeorm");
 var path_1 = __importDefault(require("path"));
 var fs_1 = __importDefault(require("fs"));
-var User_1 = __importDefault(require("../infra/typeorm/entities/User"));
-var upload_1 = __importDefault(require("../../../config/upload"));
-var AppError_1 = __importDefault(require("../../../shared/errors/AppError"));
+var User_1 = __importDefault(require("@modules/users/infra/typeorm/entities/User"));
+var upload_1 = __importDefault(require("@config/upload"));
+var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var UpdateUserAvatarService = /** @class */ (function () {
     function UpdateUserAvatarService() {
     }

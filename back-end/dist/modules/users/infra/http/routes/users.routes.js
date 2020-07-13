@@ -1,23 +1,4 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -58,31 +39,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
-var Appointment_1 = __importDefault(require("../infra/typeorm/entities/Appointment"));
-var AppointmentsRepository = /** @class */ (function (_super) {
-    __extends(AppointmentsRepository, _super);
-    function AppointmentsRepository() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    AppointmentsRepository.prototype.findByDate = function (date) {
-        return __awaiter(this, void 0, void 0, function () {
-            var findAppointmentInSameDate;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.findOne({
-                            where: { date: date },
-                        })];
-                    case 1:
-                        findAppointmentInSameDate = _a.sent();
-                        return [2 /*return*/, findAppointmentInSameDate || null];
-                }
-            });
-        });
-    };
-    AppointmentsRepository = __decorate([
-        typeorm_1.EntityRepository(Appointment_1.default)
-    ], AppointmentsRepository);
-    return AppointmentsRepository;
-}(typeorm_1.Repository));
-exports.default = AppointmentsRepository;
+var express_1 = require("express");
+var multer_1 = __importDefault(require("multer"));
+var CreateUserService_1 = __importDefault(require("@modules/users/services/CreateUserService"));
+var UpdateUserAvatarService_1 = __importDefault(require("@modules/users/services/UpdateUserAvatarService"));
+var upload_1 = __importDefault(require("@config/upload"));
+var ensureAuthenticated_1 = __importDefault(require("@modules/users/infra/http/middlewares/ensureAuthenticated"));
+var usersRouter = express_1.Router();
+var upload = multer_1.default(upload_1.default);
+usersRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, name, email, password, createUser, user;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = request.body, name = _a.name, email = _a.email, password = _a.password;
+                createUser = new CreateUserService_1.default();
+                return [4 /*yield*/, createUser.execute({
+                        name: name,
+                        email: email,
+                        password: password,
+                    })];
+            case 1:
+                user = _b.sent();
+                delete user.password;
+                return [2 /*return*/, response.json(user)];
+        }
+    });
+}); });
+usersRouter.patch('/avatar', ensureAuthenticated_1.default, upload.single('avatar'), function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var updateUserAvatar, user;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                updateUserAvatar = new UpdateUserAvatarService_1.default();
+                return [4 /*yield*/, updateUserAvatar.execute({
+                        user_id: request.user.id,
+                        avatarFilename: request.file.filename,
+                    })];
+            case 1:
+                user = _a.sent();
+                delete user.password;
+                return [2 /*return*/, response.json(user)];
+        }
+    });
+}); });
+exports.default = usersRouter;

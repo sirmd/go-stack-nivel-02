@@ -39,44 +39,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
-var bcryptjs_1 = require("bcryptjs");
-var User_1 = __importDefault(require("../models/User"));
-var CreateUserService = /** @class */ (function () {
-    function CreateUserService() {
-    }
-    CreateUserService.prototype.execute = function (_a) {
-        var name = _a.name, email = _a.email, password = _a.password;
-        return __awaiter(this, void 0, void 0, function () {
-            var userRepository, checkUserExists, hashedPassword, user;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        userRepository = typeorm_1.getRepository(User_1.default);
-                        return [4 /*yield*/, userRepository.findOne({
-                                where: { email: email },
-                            })];
-                    case 1:
-                        checkUserExists = _b.sent();
-                        if (checkUserExists) {
-                            throw new Error('Email address already used.');
-                        }
-                        return [4 /*yield*/, bcryptjs_1.hash(password, 8)];
-                    case 2:
-                        hashedPassword = _b.sent();
-                        user = userRepository.create({
-                            name: name,
-                            email: email,
-                            password: hashedPassword,
-                        });
-                        return [4 /*yield*/, userRepository.save(user)];
-                    case 3:
-                        _b.sent();
-                        return [2 /*return*/, user];
-                }
-            });
-        });
-    };
-    return CreateUserService;
-}());
-exports.default = CreateUserService;
+var express_1 = require("express");
+var AuthenticateUserService_1 = __importDefault(require("@modules/users/services/AuthenticateUserService"));
+var sessionsRouter = express_1.Router();
+sessionsRouter.post('/', function (request, response) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, authenticateUserService, _b, user, token;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _a = request.body, email = _a.email, password = _a.password;
+                authenticateUserService = new AuthenticateUserService_1.default();
+                return [4 /*yield*/, authenticateUserService.execute({
+                        email: email,
+                        password: password,
+                    })];
+            case 1:
+                _b = _c.sent(), user = _b.user, token = _b.token;
+                delete user.password;
+                return [2 /*return*/, response.json({ user: user, token: token })];
+        }
+    });
+}); });
+exports.default = sessionsRouter;
