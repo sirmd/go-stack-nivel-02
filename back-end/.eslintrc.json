@@ -32,10 +32,18 @@
     ],
     "prettier/prettier": "error",
     "class-methods-use-this": "off",
-    "camelcase":"off",
-    "@typescript-eslint/no-unused-vars": ["error", {
-      "argsIgnorePattern": "_"
-    }]
+    "camelcase": "off",
+    "@typescript-eslint/interface-name-prefix": [
+      {
+        "prefixWithI": "always"
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "_"
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
