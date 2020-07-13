@@ -3,7 +3,8 @@ import { sign } from 'jsonwebtoken';
 import User from '@modules/users/infra/typeorm/entities/User';
 import authConfig from '@config/auth';
 import AppError from '@shared/errors/AppError';
-import IUsersRepository from '../repositories/IUserRepository';
+import { inject, injectable } from 'tsyringe';
+import { IUsersRepository } from '../repositories/IUsersRepository';
 
 interface RequestDTO {
   email: string;
@@ -15,16 +16,20 @@ interface ResponseDTO {
   token: string;
 }
 
+// @injectable()
 class AuthenticateUserService {
 
-
-  constructor(private usersRepository: IUsersRepository) {}
+  constructor(
+    // @inject('UsersRepository')
+    private usersRepository: IUsersRepository) { }
 
 
   public async execute({ email, password }: RequestDTO): Promise<ResponseDTO> {
 
+    console.log({ email, password });
     const user = await this.usersRepository.findByEmail(email);
 
+    console.log(user);
     if (!user) {
       throw new AppError('Incorrect email/password combination.', 401);
     }
