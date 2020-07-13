@@ -16,17 +16,16 @@ interface ResponseDTO {
   token: string;
 }
 
-// @injectable()
+@injectable()
 class AuthenticateUserService {
 
   constructor(
-    // @inject('UsersRepository')
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository) { }
 
 
   public async execute({ email, password }: RequestDTO): Promise<ResponseDTO> {
 
-    console.log({ email, password });
     const user = await this.usersRepository.findByEmail(email);
 
     console.log(user);
