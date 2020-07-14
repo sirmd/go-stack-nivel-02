@@ -16,11 +16,11 @@ interface ResponseDTO {
   token: string;
 }
 
-// @injectable()
+@injectable()
 class AuthenticateUserService {
 
   constructor(
-    // @inject('UsersRepository')
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository) { }
 
 
