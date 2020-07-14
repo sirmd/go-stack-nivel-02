@@ -18,7 +18,7 @@ class UsersRepository implements IUsersRepository {
 
     const findUser = await this.ormRepository.findOne(id);
 
-    return findUser || undefined;
+    return findUser;
   }
 
   public async findByEmail(email: string): Promise<User | undefined> {
@@ -26,7 +26,7 @@ class UsersRepository implements IUsersRepository {
       where: { email }
     });
 
-    return findUserWithEmail || undefined;
+    return findUserWithEmail;
   }
 
   public async create(userData: ICreateUserDTO): Promise<User> {

@@ -26,7 +26,6 @@ class AuthenticateUserService {
 
   public async execute({ email, password }: RequestDTO): Promise<ResponseDTO> {
 
-    console.log({ email, password });
     const user = await this.usersRepository.findByEmail(email);
 
     console.log(user);
