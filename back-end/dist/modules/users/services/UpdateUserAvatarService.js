@@ -1,4 +1,16 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,54 +51,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
-var path_1 = __importDefault(require("path"));
-var fs_1 = __importDefault(require("fs"));
-var User_1 = __importDefault(require("@modules/users/infra/typeorm/entities/User"));
-var upload_1 = __importDefault(require("@config/upload"));
 var AppError_1 = __importDefault(require("@shared/errors/AppError"));
+var tsyringe_1 = require("tsyringe");
 var UpdateUserAvatarService = /** @class */ (function () {
-    function UpdateUserAvatarService() {
+    function UpdateUserAvatarService(usersRepository, storageProvider) {
+        this.usersRepository = usersRepository;
+        this.storageProvider = storageProvider;
     }
     UpdateUserAvatarService.prototype.execute = function (_a) {
         var user_id = _a.user_id, avatarFilename = _a.avatarFilename;
         return __awaiter(this, void 0, void 0, function () {
-            var usersRepository, user, userAvatarFilePath, error_1;
+            var user, fileName;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0:
-                        usersRepository = typeorm_1.getRepository(User_1.default);
-                        return [4 /*yield*/, usersRepository.findOne(user_id)];
+                    case 0: return [4 /*yield*/, this.usersRepository.findById(user_id)];
                     case 1:
                         user = _b.sent();
                         if (!user) {
                             throw new AppError_1.default('Only authenticated users can change avatar.', 401);
                         }
-                        if (!user.avatar) return [3 /*break*/, 5];
-                        userAvatarFilePath = path_1.default.join(upload_1.default.directory, user.avatar);
-                        _b.label = 2;
+                        if (!user.avatar) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.storageProvider.deleteFile(user.avatar)];
                     case 2:
-                        _b.trys.push([2, 4, , 5]);
-                        return [4 /*yield*/, fs_1.default.promises.unlink(userAvatarFilePath)];
-                    case 3:
                         _b.sent();
-                        return [3 /*break*/, 5];
+                        _b.label = 3;
+                    case 3: return [4 /*yield*/, this.storageProvider.saveFile(avatarFilename)];
                     case 4:
-                        error_1 = _b.sent();
-                        if (error_1.code !== 'ENOENT') {
-                            throw new AppError_1.default(error_1.statusCode);
-                        }
-                        return [3 /*break*/, 5];
+                        fileName = _b.sent();
+                        user.avatar = fileName;
+                        return [4 /*yield*/, this.usersRepository.save(user)];
                     case 5:
-                        user.avatar = avatarFilename;
-                        return [4 /*yield*/, usersRepository.save(user)];
-                    case 6:
                         _b.sent();
                         return [2 /*return*/, user];
                 }
             });
         });
     };
+    UpdateUserAvatarService = __decorate([
+        tsyringe_1.injectable(),
+        __param(0, tsyringe_1.inject('UsersRepository')),
+        __param(1, tsyringe_1.inject('StorageProvider')),
+        __metadata("design:paramtypes", [Object, Object])
+    ], UpdateUserAvatarService);
     return UpdateUserAvatarService;
 }());
 exports.default = UpdateUserAvatarService;

@@ -35,47 +35,25 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var typeorm_1 = require("typeorm");
-var Appointment_1 = __importDefault(require("@modules/appointments/infra/typeorm/entities/Appointment"));
-var AppointmentsRepository = /** @class */ (function () {
-    function AppointmentsRepository() {
-        this.ormRepository = typeorm_1.getRepository(Appointment_1.default);
+var bcryptjs_1 = require("bcryptjs");
+var BCryptHashProvider = /** @class */ (function () {
+    function BCryptHashProvider() {
     }
-    AppointmentsRepository.prototype.create = function (_a) {
-        var provider_id = _a.provider_id, date = _a.date;
+    BCryptHashProvider.prototype.generateHash = function (payload) {
         return __awaiter(this, void 0, void 0, function () {
-            var appointment;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        appointment = this.ormRepository.create({ provider_id: provider_id, date: date });
-                        return [4 /*yield*/, this.ormRepository.save(appointment)];
-                    case 1:
-                        _b.sent();
-                        return [2 /*return*/, appointment];
-                }
-            });
-        });
-    };
-    AppointmentsRepository.prototype.findByDate = function (date) {
-        return __awaiter(this, void 0, void 0, function () {
-            var findAppointmentInSameDate;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.ormRepository.findOne({
-                            where: { date: date },
-                        })];
-                    case 1:
-                        findAppointmentInSameDate = _a.sent();
-                        return [2 /*return*/, findAppointmentInSameDate || undefined];
-                }
+                return [2 /*return*/, bcryptjs_1.hash(payload, 8)];
             });
         });
     };
-    return AppointmentsRepository;
+    BCryptHashProvider.prototype.compareHash = function (payload, hashed) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, bcryptjs_1.compare(payload, hashed)];
+            });
+        });
+    };
+    return BCryptHashProvider;
 }());
-exports.default = AppointmentsRepository;
+exports.default = BCryptHashProvider;
