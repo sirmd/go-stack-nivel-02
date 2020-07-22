@@ -1,9 +1,7 @@
-import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import { inject, injectable } from 'tsyringe';
-import { IUsersRepository } from '../repositories/IUsersRepository';
-import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
 import IMailProvider from '@shared/providers/MailProvider/models/IMailProvider';
+import { IUsersRepository } from '../repositories/IUsersRepository';
 import { IUserTokensRepository } from '../repositories/IUserTokensRepository';
 
 interface RequestDTO {
@@ -12,7 +10,6 @@ interface RequestDTO {
 
 @injectable()
 class SendForgotEmailService {
-
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
@@ -22,24 +19,33 @@ class SendForgotEmailService {
 
     @inject('UserTokensRepository')
     private userTokensRepository: IUserTokensRepository,
-  ) { }
+  ) {}
 
   public async execute({ email }: RequestDTO): Promise<void> {
-    const userExists = await this.usersRepository.findByEmail(email);
+    const user = await this.usersRepository.findByEmail(email);
 
-    if (!userExists) {
+    if (!user) {
       throw new AppError("User doesn't exists.");
-
     }
 
-    const { id } = userExists;
+    const { id } = user;
 
     const { token } = await this.userTokensRepository.generate(id);
 
-    await this.mailProvider.sendMail(
-      email,
-      `Pedido de recuperação de senha recebido: ${token}`
-    );
+    await this.mailProvider.sendMail({
+      to: {
+        name: user.name,
+        email: user.email,
+      },
+      subject: '[GoBarber] - Recuperação de senha',
+      templateData: {
+        template: 'Olá {{name}}: {{token}}',
+        variables: {
+          name: user.name,
+          token,
+        },
+      },
+    });
   }
 }
 

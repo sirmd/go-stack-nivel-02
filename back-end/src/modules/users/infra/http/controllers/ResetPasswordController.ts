@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { container } from "tsyringe";
+import { container } from 'tsyringe';
 import ResetPasswordService from '@modules/users/services/ResetPasswordService';
 
 export default class ResetPasswordController {
@@ -9,7 +9,7 @@ export default class ResetPasswordController {
 
     await resetPassword.execute({
       password,
-      token
+      token,
     });
 
     return response.status(204).json();
