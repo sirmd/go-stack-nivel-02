@@ -20,8 +20,8 @@ class SendForgotEmailService {
     @inject('MailProvider')
     private mailProvider: IMailProvider,
 
-    @inject('MailProvider')
-    private userTokensProvider: IUserTokensRepository,
+    @inject('UserTokensRepository')
+    private userTokensRepository: IUserTokensRepository,
   ) { }
 
   public async execute({ email }: RequestDTO): Promise<void> {
@@ -34,7 +34,7 @@ class SendForgotEmailService {
 
     const { id } = userExists;
 
-    await this.userTokensProvider.generate(id);
+    await this.userTokensRepository.generate(id);
 
     this.mailProvider.sendMail(email, 'Pedido de recuperação de senha recebido');
   }
