@@ -1,11 +1,8 @@
-
-import FakeUsersRepository from "../repositories/fakes/FakeUsersRepository";
-import SendForgotPasswordEmailService from "./SendForgotPasswordEmailService";
-import AppError from "@shared/errors/AppError";
-import FakeMailProvider from "@shared/providers/MailProvider/fakes/FakeMailProvider";
-import FakeUserTokensRepository from "../repositories/fakes/FakeUserTokensRepository";
-import ResetPasswordService from "./ResetPasswordService";
-import FakeHashProvider from "../providers/HashProvider/fakes/FakeHashProvider";
+import AppError from '@shared/errors/AppError';
+import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
+import FakeUserTokensRepository from '../repositories/fakes/FakeUserTokensRepository';
+import ResetPasswordService from './ResetPasswordService';
+import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeUserTokensRepository: FakeUserTokensRepository;
@@ -13,7 +10,6 @@ let resetPassword: ResetPasswordService;
 let fakeHashProvider: FakeHashProvider;
 
 describe('ResetPassword', () => {
-
   // Instancia os repositórios antes de cada teste, é utilizado o beforeEach
   // para não repetir código dentro dos testes
   beforeEach(() => {
@@ -23,11 +19,11 @@ describe('ResetPassword', () => {
     resetPassword = new ResetPasswordService(
       fakeUsersRepository,
       fakeUserTokensRepository,
-      fakeHashProvider);
+      fakeHashProvider,
+    );
   });
 
   it('should be able to reset the password', async () => {
-
     const { id } = await fakeUsersRepository.create({
       name: 'John Doe',
       email: 'johndoe@example.com',
@@ -47,17 +43,14 @@ describe('ResetPassword', () => {
 
     expect(generateHash).toHaveBeenCalledWith('123123');
     expect(user?.password).toBe('123123');
-
   });
   it('should not be able to reset the password with non-existing token', async () => {
-
     await expect(
       resetPassword.execute({
         token: 'ops',
-        password: '123456'
-      })
+        password: '123456',
+      }),
     ).rejects.toBeInstanceOf(AppError);
-
   });
   it('should not be able to reset the password with non-existing user', async () => {
     const { token } = await fakeUserTokensRepository.generate('ops');
@@ -65,13 +58,11 @@ describe('ResetPassword', () => {
     await expect(
       resetPassword.execute({
         token,
-        password: '123456'
-      })
+        password: '123456',
+      }),
     ).rejects.toBeInstanceOf(AppError);
-
   });
   it('should not be able to reset password if token generated 2h earlier', async () => {
-
     const { id } = await fakeUsersRepository.create({
       name: 'John Doe',
       email: 'johndoe@example.com',
@@ -92,9 +83,8 @@ describe('ResetPassword', () => {
     await expect(
       resetPassword.execute({
         token,
-        password: '123456'
-      })
+        password: '123456',
+      }),
     ).rejects.toBeInstanceOf(AppError);
-
   });
 });
