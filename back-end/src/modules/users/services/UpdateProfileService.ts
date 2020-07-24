@@ -1,10 +1,6 @@
-import path from 'path';
-import fs from 'fs';
 import User from '@modules/users/infra/typeorm/entities/User';
-import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 import { inject, injectable } from 'tsyringe';
-import IStorageProvider from '@shared/providers/StorageProvider/models/IStorageProvider';
 import { IUsersRepository } from '../repositories/IUsersRepository';
 import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
@@ -53,9 +49,11 @@ class UpdateProfileService {
 
     if (password && old_password) {
       const checkOldPassword = await this.hashProvider.compareHash(
-        user.password,
         old_password,
+        user.password,
       );
+
+      console.log(user.password, old_password);
 
       if (!checkOldPassword) {
         throw new AppError('The old password informed is incorrect.');

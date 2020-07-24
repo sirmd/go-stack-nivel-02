@@ -1,6 +1,5 @@
 import AppError from '@shared/errors/AppError';
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
-import UpdateUserAvatarService from './UpdateUserAvatarService';
 import FakeHashProvider from '../providers/HashProvider/fakes/FakeHashProvider';
 import UpdateProfileService from './UpdateProfileService';
 
@@ -99,6 +98,18 @@ describe('UpdateProfile', () => {
     await expect(
       updateProfileService.execute({
         user_id: user.id,
+        name: 'John Tre',
+        email: 'johndoe@example.com',
+        password: '123123',
+        old_password: 'wrong',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not be able to show the profile for non-existing user', async () => {
+    await expect(
+      updateProfileService.execute({
+        user_id: 'ops',
         name: 'John Tre',
         email: 'johndoe@example.com',
         password: '123123',
