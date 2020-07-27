@@ -76,6 +76,29 @@ var AppointmentsRepository = /** @class */ (function () {
             });
         });
     };
+    AppointmentsRepository.prototype.findAllInMonthFromProvider = function (_a) {
+        var provider_id = _a.provider_id, month = _a.month, year = _a.year;
+        return __awaiter(this, void 0, void 0, function () {
+            var parsedMonth, appointments;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        parsedMonth = String(month).padStart(2, '0');
+                        return [4 /*yield*/, this.ormRepository.find({
+                                where: {
+                                    provider_id: provider_id,
+                                    date: typeorm_1.Raw(function (dateFieldName) {
+                                        return "to_char(" + dateFieldName + ", 'MM-YYYY') = '" + parsedMonth + "-" + year + "'";
+                                    }),
+                                },
+                            })];
+                    case 1:
+                        appointments = _b.sent();
+                        return [2 /*return*/, appointments];
+                }
+            });
+        });
+    };
     return AppointmentsRepository;
 }());
 exports.default = AppointmentsRepository;

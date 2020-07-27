@@ -39,26 +39,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var FakeUsersRepository_1 = __importDefault(require("../repositories/fakes/FakeUsersRepository"));
 var AuthenticateUserService_1 = __importDefault(require("./AuthenticateUserService"));
 var CreateUserService_1 = __importDefault(require("./CreateUserService"));
-var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var FakeHashProvider_1 = __importDefault(require("../providers/HashProvider/fakes/FakeHashProvider"));
 describe('AuthenticateUser', function () {
+    var fakeUsersRepository;
+    var fakeHashProvider;
+    var createUser;
+    var authenticateUser;
+    beforeEach(function () {
+        fakeUsersRepository = new FakeUsersRepository_1.default();
+        fakeHashProvider = new FakeHashProvider_1.default();
+        createUser = new CreateUserService_1.default(fakeUsersRepository, fakeHashProvider);
+        authenticateUser = new AuthenticateUserService_1.default(fakeUsersRepository, fakeHashProvider);
+    });
     it('should be able to authenticate', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var fakeUsersRepository, fakeHashProvider, createUser, authenticateUser, user, response;
+        var user, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    fakeUsersRepository = new FakeUsersRepository_1.default();
-                    fakeHashProvider = new FakeHashProvider_1.default();
-                    createUser = new CreateUserService_1.default(fakeUsersRepository, fakeHashProvider);
-                    authenticateUser = new AuthenticateUserService_1.default(fakeUsersRepository, fakeHashProvider);
-                    return [4 /*yield*/, createUser.execute({
-                            name: 'John Doe',
-                            email: 'johndoe@example.com',
-                            password: '123345',
-                        })];
+                case 0: return [4 /*yield*/, createUser.execute({
+                        name: 'John Doe',
+                        email: 'johndoe@example.com',
+                        password: '123345',
+                    })];
                 case 1:
                     user = _a.sent();
                     return [4 /*yield*/, authenticateUser.execute({
@@ -67,45 +72,45 @@ describe('AuthenticateUser', function () {
                         })];
                 case 2:
                     response = _a.sent();
-                    expect(response).toHaveProperty('token');
-                    expect(response.user).toBe(user);
+                    return [4 /*yield*/, expect(response).toHaveProperty('token')];
+                case 3:
+                    _a.sent();
+                    return [4 /*yield*/, expect(response.user).toBe(user)];
+                case 4:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
     }); });
     it('should not be able to authenticate with non-existing email', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var fakeUsersRepository, fakeHashProvider, authenticateUser;
         return __generator(this, function (_a) {
-            fakeUsersRepository = new FakeUsersRepository_1.default();
-            fakeHashProvider = new FakeHashProvider_1.default();
-            authenticateUser = new AuthenticateUserService_1.default(fakeUsersRepository, fakeHashProvider);
-            expect(authenticateUser.execute({
-                email: 'ops@example.com',
-                password: '123345',
-            })).rejects.toBeInstanceOf(AppError_1.default);
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, expect(authenticateUser.execute({
+                        email: 'ops@example.com',
+                        password: '123345',
+                    })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     }); });
     it('should not be able to authenticate with wrong password', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var fakeUsersRepository, fakeHashProvider, createUser, authenticateUser;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    fakeUsersRepository = new FakeUsersRepository_1.default();
-                    fakeHashProvider = new FakeHashProvider_1.default();
-                    createUser = new CreateUserService_1.default(fakeUsersRepository, fakeHashProvider);
-                    authenticateUser = new AuthenticateUserService_1.default(fakeUsersRepository, fakeHashProvider);
-                    return [4 /*yield*/, createUser.execute({
-                            name: 'John Doe',
-                            email: 'johndoe@example.com',
-                            password: '123345',
-                        })];
+                case 0: return [4 /*yield*/, createUser.execute({
+                        name: 'John Doe',
+                        email: 'johndoe@example.com',
+                        password: '123345',
+                    })];
                 case 1:
                     _a.sent();
-                    expect(authenticateUser.execute({
-                        email: 'johndoe@example.com',
-                        password: 'asdsadadsa',
-                    })).rejects.toBeInstanceOf(AppError_1.default);
+                    return [4 /*yield*/, expect(authenticateUser.execute({
+                            email: 'johndoe@example.com',
+                            password: 'asdsadadsa',
+                        })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 2:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });

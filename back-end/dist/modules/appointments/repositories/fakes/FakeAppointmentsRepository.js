@@ -39,9 +39,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Appointment_1 = __importDefault(require("../../../appointments/infra/typeorm/entities/Appointment"));
 var uuidv4_1 = require("uuidv4");
 var date_fns_1 = require("date-fns");
+var Appointment_1 = __importDefault(require("../../infra/typeorm/entities/Appointment"));
 var FakeAppointmentsRepository = /** @class */ (function () {
     function FakeAppointmentsRepository() {
         this.appointments = [];
@@ -50,9 +50,24 @@ var FakeAppointmentsRepository = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var findAppointment;
             return __generator(this, function (_a) {
-                findAppointment = this.appointments
-                    .find(function (appointment) { return date_fns_1.isEqual(appointment.date, date); });
+                findAppointment = this.appointments.find(function (appointment) {
+                    return date_fns_1.isEqual(appointment.date, date);
+                });
                 return [2 /*return*/, findAppointment];
+            });
+        });
+    };
+    FakeAppointmentsRepository.prototype.findAllInMonthFromProvider = function (_a) {
+        var provider_id = _a.provider_id, month = _a.month, year = _a.year;
+        return __awaiter(this, void 0, void 0, function () {
+            var appointments;
+            return __generator(this, function (_b) {
+                appointments = this.appointments.filter(function (appointment) {
+                    return appointment.provider_id === provider_id &&
+                        date_fns_1.getMonth(appointment.date) + 1 === month &&
+                        date_fns_1.getYear(appointment.date) === year;
+                });
+                return [2 /*return*/, appointments];
             });
         });
     };

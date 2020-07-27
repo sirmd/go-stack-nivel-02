@@ -36,23 +36,23 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var BCryptHashProvider = /** @class */ (function () {
-    function BCryptHashProvider() {
+var FakeHashProvider = /** @class */ (function () {
+    function FakeHashProvider() {
     }
-    BCryptHashProvider.prototype.generateHash = function (payload) {
+    FakeHashProvider.prototype.generateHash = function (payload) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, payload];
             });
         });
     };
-    BCryptHashProvider.prototype.compareHash = function (payload, hashed) {
+    FakeHashProvider.prototype.compareHash = function (payload, hashed) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, payload === hashed];
             });
         });
     };
-    return BCryptHashProvider;
+    return FakeHashProvider;
 }());
-exports.default = BCryptHashProvider;
+exports.default = FakeHashProvider;

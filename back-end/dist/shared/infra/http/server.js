@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
 var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 require("express-async-errors");
-require("reflect-metadata");
 var upload_1 = __importDefault(require("@config/upload"));
 var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var routes_1 = __importDefault(require("./routes"));

@@ -53,8 +53,6 @@ class UpdateProfileService {
         user.password,
       );
 
-      console.log(user.password, old_password);
-
       if (!checkOldPassword) {
         throw new AppError('The old password informed is incorrect.');
       }

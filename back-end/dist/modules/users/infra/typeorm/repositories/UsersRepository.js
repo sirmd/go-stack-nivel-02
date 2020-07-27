@@ -64,7 +64,7 @@ var UsersRepository = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.ormRepository.findOne({
-                            where: { email: email }
+                            where: { email: email },
                         })];
                     case 1:
                         findUserWithEmail = _a.sent();
@@ -73,17 +73,39 @@ var UsersRepository = /** @class */ (function () {
             });
         });
     };
-    UsersRepository.prototype.create = function (userData) {
+    UsersRepository.prototype.findAllProvidersExcept = function (user_id) {
         return __awaiter(this, void 0, void 0, function () {
-            var User;
+            var users;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        User = this.ormRepository.create(userData);
-                        return [4 /*yield*/, this.ormRepository.save(User)];
+                        if (!user_id) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.ormRepository.find({
+                                where: { id: typeorm_1.Not(user_id) },
+                            })];
+                    case 1:
+                        users = _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.ormRepository.find()];
+                    case 3:
+                        users = _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/, users];
+                }
+            });
+        });
+    };
+    UsersRepository.prototype.create = function (userData) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        user = this.ormRepository.create(userData);
+                        return [4 /*yield*/, this.ormRepository.save(user)];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/, User];
+                        return [2 /*return*/, user];
                 }
             });
         });

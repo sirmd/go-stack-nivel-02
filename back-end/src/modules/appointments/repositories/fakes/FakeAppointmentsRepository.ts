@@ -1,29 +1,48 @@
-import Appointment from '../../../appointments/infra/typeorm/entities/Appointment';
-import { IAppointmentsRepository } from '../../../appointments/repositories/IAppointmentsRepository';
-import ICreateAppointmentDTO from '../../../appointments/dtos/ICreateAppointmentDTO';
 import { uuid } from 'uuidv4';
-import { isEqual } from 'date-fns';
+import { isEqual, getMonth, getYear } from 'date-fns';
+import IFoundInMonthFromProviderDTO from '@modules/appointments/dtos/IFoundInMonthFromProviderDTO';
+import Appointment from '../../infra/typeorm/entities/Appointment';
+import { IAppointmentsRepository } from '../IAppointmentsRepository';
+import ICreateAppointmentDTO from '../../dtos/ICreateAppointmentDTO';
 
 class FakeAppointmentsRepository implements IAppointmentsRepository {
-    private appointments: Appointment[] = [];
+  private appointments: Appointment[] = [];
 
-    public async findByDate(date: Date): Promise<Appointment | undefined> {
-        const findAppointment = this.appointments
-            .find(appointment => isEqual(appointment.date, date));
+  public async findByDate(date: Date): Promise<Appointment | undefined> {
+    const findAppointment = this.appointments.find(appointment =>
+      isEqual(appointment.date, date),
+    );
 
-        return findAppointment;
-    }
+    return findAppointment;
+  }
 
-    public async create({ provider_id, date }: ICreateAppointmentDTO): Promise<Appointment> {
-        const appointment = new Appointment();
+  public async findAllInMonthFromProvider({
+    provider_id,
+    month,
+    year,
+  }: IFoundInMonthFromProviderDTO): Promise<Appointment[]> {
+    const appointments = this.appointments.filter(
+      appointment =>
+        appointment.provider_id === provider_id &&
+        getMonth(appointment.date) + 1 === month &&
+        getYear(appointment.date) === year,
+    );
 
-        Object.assign(appointment, { id: uuid(), date, provider_id });
+    return appointments;
+  }
 
-        this.appointments.push(appointment);
+  public async create({
+    provider_id,
+    date,
+  }: ICreateAppointmentDTO): Promise<Appointment> {
+    const appointment = new Appointment();
 
-        return appointment;
-    }
+    Object.assign(appointment, { id: uuid(), date, provider_id });
 
+    this.appointments.push(appointment);
+
+    return appointment;
+  }
 }
 
 export default FakeAppointmentsRepository;

@@ -39,24 +39,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var FakeUsersRepository_1 = __importDefault(require("../repositories/fakes/FakeUsersRepository"));
-var UpdateUserAvatarService_1 = __importDefault(require("./UpdateUserAvatarService"));
 var FakeStorageProvider_1 = __importDefault(require("@shared/providers/StorageProvider/fakes/FakeStorageProvider"));
 var AppError_1 = __importDefault(require("@shared/errors/AppError"));
+var FakeUsersRepository_1 = __importDefault(require("../repositories/fakes/FakeUsersRepository"));
+var UpdateUserAvatarService_1 = __importDefault(require("./UpdateUserAvatarService"));
 describe('UpdateUserAvatar', function () {
+    var fakeUsersRepository;
+    var fakeStorageProvider;
+    var updateUserAvatar;
+    beforeEach(function () {
+        fakeUsersRepository = new FakeUsersRepository_1.default();
+        fakeStorageProvider = new FakeStorageProvider_1.default();
+        updateUserAvatar = new UpdateUserAvatarService_1.default(fakeUsersRepository, fakeStorageProvider);
+    });
     it('should be able to Update User Avatar', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var fakeUsersRepository, fakeStorageProvider, updateUserAvatar, user;
+        var user;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    fakeUsersRepository = new FakeUsersRepository_1.default();
-                    fakeStorageProvider = new FakeStorageProvider_1.default();
-                    updateUserAvatar = new UpdateUserAvatarService_1.default(fakeUsersRepository, fakeStorageProvider);
-                    return [4 /*yield*/, fakeUsersRepository.create({
-                            name: 'John Doe',
-                            email: 'johndoe@email.com',
-                            password: '123456',
-                        })];
+                case 0: return [4 /*yield*/, fakeUsersRepository.create({
+                        name: 'John Doe',
+                        email: 'johndoe@email.com',
+                        password: '123456',
+                    })];
                 case 1:
                     user = _a.sent();
                     return [4 /*yield*/, updateUserAvatar.execute({
@@ -65,32 +69,31 @@ describe('UpdateUserAvatar', function () {
                         })];
                 case 2:
                     _a.sent();
-                    expect(user.avatar).toBe('avatar.jpg');
+                    return [4 /*yield*/, expect(user.avatar).toBe('avatar.jpg')];
+                case 3:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
     }); });
     it('should not be able to Update User Avatar for an unknown user', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var fakeUsersRepository, fakeStorageProvider, updateUserAvatar;
         return __generator(this, function (_a) {
-            fakeUsersRepository = new FakeUsersRepository_1.default();
-            fakeStorageProvider = new FakeStorageProvider_1.default();
-            updateUserAvatar = new UpdateUserAvatarService_1.default(fakeUsersRepository, fakeStorageProvider);
-            expect(updateUserAvatar.execute({
-                avatarFilename: 'avatar.jpg',
-                user_id: 'non-user'
-            })).rejects.toBeInstanceOf(AppError_1.default);
-            return [2 /*return*/];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, expect(updateUserAvatar.execute({
+                        avatarFilename: 'avatar.jpg',
+                        user_id: 'non-user',
+                    })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
         });
     }); });
     it('should delete old when updating the new one', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var fakeUsersRepository, fakeStorageProvider, updateUserAvatar, deleteFile, user;
+        var deleteFile, user;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    fakeUsersRepository = new FakeUsersRepository_1.default();
-                    fakeStorageProvider = new FakeStorageProvider_1.default();
-                    updateUserAvatar = new UpdateUserAvatarService_1.default(fakeUsersRepository, fakeStorageProvider);
                     deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
                     return [4 /*yield*/, fakeUsersRepository.create({
                             name: 'John Doe',
@@ -112,8 +115,13 @@ describe('UpdateUserAvatar', function () {
                 case 3:
                     _a.sent();
                     // Verifica se a função foi chamada para deletar o 1º avatar
-                    expect(deleteFile).toHaveBeenCalledWith('avatar.jpg');
-                    expect(user.avatar).toBe('avatar2.jpg');
+                    return [4 /*yield*/, expect(deleteFile).toHaveBeenCalledWith('avatar.jpg')];
+                case 4:
+                    // Verifica se a função foi chamada para deletar o 1º avatar
+                    _a.sent();
+                    return [4 /*yield*/, expect(user.avatar).toBe('avatar2.jpg')];
+                case 5:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
