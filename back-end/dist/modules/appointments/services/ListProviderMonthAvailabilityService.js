@@ -48,6 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var date_fns_1 = require("date-fns");
 var tsyringe_1 = require("tsyringe");
 var ListProviderMonthAvailabilityService = /** @class */ (function () {
     function ListProviderMonthAvailabilityService(appointmentsRepository) {
@@ -56,7 +57,7 @@ var ListProviderMonthAvailabilityService = /** @class */ (function () {
     ListProviderMonthAvailabilityService.prototype.execute = function (_a) {
         var provider_id = _a.provider_id, month = _a.month, year = _a.year;
         return __awaiter(this, void 0, void 0, function () {
-            var appointments;
+            var appointments, numberOfDaysInMonth, eachDayArray, availability;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.appointmentsRepository.findAllInMonthFromProvider({
@@ -66,8 +67,18 @@ var ListProviderMonthAvailabilityService = /** @class */ (function () {
                         })];
                     case 1:
                         appointments = _b.sent();
-                        console.log(appointments);
-                        return [2 /*return*/, [{ day: 1, available: true }]];
+                        numberOfDaysInMonth = date_fns_1.getDaysInMonth(new Date(year, month - 1));
+                        eachDayArray = Array.from({ length: numberOfDaysInMonth }, function (value, index) { return index + 1; });
+                        availability = eachDayArray.map(function (day) {
+                            var appointmentsInDay = appointments.filter(function (appointment) {
+                                return date_fns_1.getDate(appointment.date) === day;
+                            });
+                            return {
+                                day: day,
+                                available: appointmentsInDay.length < 10,
+                            };
+                        });
+                        return [2 /*return*/, availability];
                 }
             });
         });
@@ -80,37 +91,3 @@ var ListProviderMonthAvailabilityService = /** @class */ (function () {
     return ListProviderMonthAvailabilityService;
 }());
 exports.default = ListProviderMonthAvailabilityService;
-// import { inject, injectable } from 'tsyringe';
-// import { IAppointmentsRepository } from '../repositories/IAppointmentsRepository';
-// interface IRequestDTO {
-//   provider_id: string;
-//   month: number;
-//   year: number;
-// }
-// type IResponseDTO = Array<{
-//   day: number;
-//   available: boolean;
-// }>;
-// @injectable()
-// class ListProviderMonthAvailabilityService {
-//   constructor(
-//     @inject('AppointmentsRepository')
-//     private appointmentsRepository: IAppointmentsRepository,
-//   ) {}
-//   public async execute({
-//     provider_id,
-//     month,
-//     year,
-//   }: IRequestDTO): Promise<IResponseDTO> {
-//     const appointments = await this.appointmentsRepository.findAllInMonthFromProvider(
-//       {
-//         provider_id,
-//         year,
-//         month,
-//       },
-//     );
-//     console.log(appointments);
-//     return [{ day: 1, available: true }];
-//   }
-// }
-// export default ListProviderMonthAvailabilityService;

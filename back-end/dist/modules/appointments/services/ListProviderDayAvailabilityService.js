@@ -1,4 +1,16 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,69 +47,46 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var uuidv4_1 = require("uuidv4");
 var date_fns_1 = require("date-fns");
-var Appointment_1 = __importDefault(require("../../infra/typeorm/entities/Appointment"));
-var FakeAppointmentsRepository = /** @class */ (function () {
-    function FakeAppointmentsRepository() {
-        this.appointments = [];
+var tsyringe_1 = require("tsyringe");
+var ListProviderDayAvailabilityService = /** @class */ (function () {
+    function ListProviderDayAvailabilityService(appointmentsRepository) {
+        this.appointmentsRepository = appointmentsRepository;
     }
-    FakeAppointmentsRepository.prototype.findByDate = function (date) {
-        return __awaiter(this, void 0, void 0, function () {
-            var findAppointment;
-            return __generator(this, function (_a) {
-                findAppointment = this.appointments.find(function (appointment) {
-                    return date_fns_1.isEqual(appointment.date, date);
-                });
-                return [2 /*return*/, findAppointment];
-            });
-        });
-    };
-    FakeAppointmentsRepository.prototype.findAllInMonthFromProvider = function (_a) {
-        var provider_id = _a.provider_id, month = _a.month, year = _a.year;
-        return __awaiter(this, void 0, void 0, function () {
-            var appointments;
-            return __generator(this, function (_b) {
-                appointments = this.appointments.filter(function (appointment) {
-                    return appointment.provider_id === provider_id &&
-                        date_fns_1.getMonth(appointment.date) + 1 === month &&
-                        date_fns_1.getYear(appointment.date) === year;
-                });
-                return [2 /*return*/, appointments];
-            });
-        });
-    };
-    FakeAppointmentsRepository.prototype.findAllInDayFromProvider = function (_a) {
+    ListProviderDayAvailabilityService.prototype.execute = function (_a) {
         var provider_id = _a.provider_id, month = _a.month, year = _a.year, day = _a.day;
         return __awaiter(this, void 0, void 0, function () {
-            var appointments;
+            var appointments, hourStart, eachHourArray, availability;
             return __generator(this, function (_b) {
-                appointments = this.appointments.filter(function (appointment) {
-                    return appointment.provider_id === provider_id &&
-                        date_fns_1.getDate(appointment.date) + 1 === day &&
-                        date_fns_1.getMonth(appointment.date) + 1 === month &&
-                        date_fns_1.getYear(appointment.date) === year;
-                });
-                return [2 /*return*/, appointments];
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, this.appointmentsRepository.findAllInDayFromProvider({
+                            provider_id: provider_id,
+                            month: month,
+                            year: year,
+                            day: day,
+                        })];
+                    case 1:
+                        appointments = _b.sent();
+                        hourStart = 8;
+                        eachHourArray = Array.from({ length: 10 }, function (_, index) { return index + hourStart; });
+                        availability = eachHourArray.map(function (hour) {
+                            var hasAppointmentInHour = appointments.find(function (appointment) { return date_fns_1.getHours(appointment.date) === hour; });
+                            return {
+                                hour: hour,
+                                available: !hasAppointmentInHour,
+                            };
+                        });
+                        return [2 /*return*/, availability];
+                }
             });
         });
     };
-    FakeAppointmentsRepository.prototype.create = function (_a) {
-        var provider_id = _a.provider_id, date = _a.date;
-        return __awaiter(this, void 0, void 0, function () {
-            var appointment;
-            return __generator(this, function (_b) {
-                appointment = new Appointment_1.default();
-                Object.assign(appointment, { id: uuidv4_1.uuid(), date: date, provider_id: provider_id });
-                this.appointments.push(appointment);
-                return [2 /*return*/, appointment];
-            });
-        });
-    };
-    return FakeAppointmentsRepository;
+    ListProviderDayAvailabilityService = __decorate([
+        tsyringe_1.injectable(),
+        __param(0, tsyringe_1.inject('AppointmentsRepository')),
+        __metadata("design:paramtypes", [Object])
+    ], ListProviderDayAvailabilityService);
+    return ListProviderDayAvailabilityService;
 }());
-exports.default = FakeAppointmentsRepository;
+exports.default = ListProviderDayAvailabilityService;
