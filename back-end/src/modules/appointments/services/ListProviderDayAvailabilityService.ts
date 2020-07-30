@@ -52,18 +52,6 @@ class ListProviderDayAvailabilityService {
       // Verifica se o horário disponível não está no passado, faz isso comparando
       // com a data-hora atual
       const compareDate = new Date(year, month - 1, day, hour);
-      console.log({
-        year,
-        month,
-        day,
-        hour,
-      });
-      console.log({
-        currentDate,
-        compareDate,
-        hasAppointmentInHour: !hasAppointmentInHour,
-        isAfter: isAfter(compareDate, currentDate),
-      });
 
       return {
         hour,
