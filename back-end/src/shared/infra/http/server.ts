@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { errors } from 'celebrate';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import 'express-async-errors';
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/files', express.static(uploadConfig.tmpFolder));
 app.use(routes);
 
+app.use(errors());
 app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
   if (err instanceof AppError) {
     return response.status(err.statusCode).json({
@@ -24,7 +26,7 @@ app.use((err: Error, request: Request, response: Response, _: NextFunction) => {
 
   return response.status(500).json({
     status: 'error',
-    message: err.message, // 'Internal server error',
+    message: 'Internal server error',
   });
 });
 
