@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import Redis, { Redis as RedisClient } from 'ioredis';
 import cacheConfig from '@config/cache';
 import ICacheProvider from '../models/ICacheProvider';
@@ -9,15 +11,18 @@ export default class RedisCacheProvider implements ICacheProvider {
     this.client = new Redis(cacheConfig.config.redis);
   }
 
-  public async save(key: string, value: string): Promise<void> {
+  public async save(key: string, value: any): Promise<void> {
     await this.client.set(key, JSON.stringify(value));
     // console.log({ key, value });
   }
 
-  public async recover(key: string): Promise<string | null> {
+  public async recover<T>(key: string): Promise<T | null> {
     const data = await this.client.get(key);
+    if (!data) return null;
 
-    return data;
+    const parsedData = JSON.parse(data) as T;
+
+    return parsedData;
   }
 
   public async invalidate(key: string): Promise<void> {}
