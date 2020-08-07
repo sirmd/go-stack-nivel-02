@@ -8,14 +8,23 @@ var multer_1 = __importDefault(require("multer"));
 var crypto_1 = __importDefault(require("crypto"));
 var tmpFolder = path_1.default.resolve(__dirname, '..', '..', 'tmp');
 exports.default = {
+    driver: process.env.STORAGE_DRIVER,
     tmpFolder: tmpFolder,
     uploadsFolder: path_1.default.resolve(tmpFolder, 'uploads'),
-    storage: multer_1.default.diskStorage({
-        destination: tmpFolder,
-        filename: function (request, file, callback) {
-            var fileHash = crypto_1.default.randomBytes(10).toString('hex');
-            var fileName = fileHash + "-" + file.originalname;
-            return callback(null, fileName);
+    multer: {
+        storage: multer_1.default.diskStorage({
+            destination: tmpFolder,
+            filename: function (request, file, callback) {
+                var fileHash = crypto_1.default.randomBytes(10).toString('hex');
+                var fileName = fileHash + "-" + file.originalname;
+                return callback(null, fileName);
+            },
+        }),
+    },
+    config: {
+        disk: {},
+        aws: {
+            bucket: 'app-gobarber-mateus',
         },
-    }),
+    },
 };

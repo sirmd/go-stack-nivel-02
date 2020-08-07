@@ -40,23 +40,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var AppError_1 = __importDefault(require("@shared/errors/AppError"));
+var FakeNotificationsRepository_1 = __importDefault(require("@modules/notifications/repositories/fakes/FakeNotificationsRepository"));
+var FakeCacheProvider_1 = __importDefault(require("@shared/providers/CacheProvider/fakes/FakeCacheProvider"));
 var FakeAppointmentsRepository_1 = __importDefault(require("../repositories/fakes/FakeAppointmentsRepository"));
 var CreateAppointmentService_1 = __importDefault(require("./CreateAppointmentService"));
 describe('CreateAppointment', function () {
     var fakeAppointmentsRepository;
     var createAppointment;
+    var fakeCacheProvider;
+    var fakeNotificationsRepository;
     beforeEach(function () {
         fakeAppointmentsRepository = new FakeAppointmentsRepository_1.default();
-        createAppointment = new CreateAppointmentService_1.default(fakeAppointmentsRepository);
+        fakeNotificationsRepository = new FakeNotificationsRepository_1.default();
+        fakeCacheProvider = new FakeCacheProvider_1.default();
+        createAppointment = new CreateAppointmentService_1.default(fakeAppointmentsRepository, fakeNotificationsRepository, fakeCacheProvider);
     });
     it('should be able to create a new appointment', function () { return __awaiter(void 0, void 0, void 0, function () {
         var appointment;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, createAppointment.execute({
-                        date: new Date(),
-                        provider_id: '12321312',
-                    })];
+                case 0:
+                    jest.spyOn(Date, 'now').mockImplementationOnce(function () {
+                        return new Date(2020, 6, 20, 15).getTime();
+                    });
+                    return [4 /*yield*/, createAppointment.execute({
+                            date: new Date(2020, 6, 20, 16),
+                            provider_id: '12321312',
+                            user_id: 'user',
+                        })];
                 case 1:
                     appointment = _a.sent();
                     expect(appointment).toHaveProperty('id');
@@ -65,22 +76,88 @@ describe('CreateAppointment', function () {
             }
         });
     }); });
-    it('should not be able to create an appointment on the same date', function () { return __awaiter(void 0, void 0, void 0, function () {
+    it('should not be able to create two appointments on the same time', function () { return __awaiter(void 0, void 0, void 0, function () {
         var appointmentDate;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    appointmentDate = new Date();
+                    appointmentDate = new Date(2020, 6, 20, 11);
+                    jest.spyOn(Date, 'now').mockImplementationOnce(function () {
+                        return new Date(2020, 6, 20, 10).getTime();
+                    });
                     return [4 /*yield*/, createAppointment.execute({
                             date: appointmentDate,
                             provider_id: '12321312',
+                            user_id: 'user',
                         })];
                 case 1:
                     _a.sent();
                     expect(createAppointment.execute({
                         date: appointmentDate,
                         provider_id: '12321312',
+                        user_id: 'user',
                     })).rejects.toBeInstanceOf(AppError_1.default);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('should not be able to create an appointment on a past date', function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    jest.spyOn(Date, 'now').mockImplementationOnce(function () {
+                        return new Date(2020, 6, 27, 21).getTime();
+                    });
+                    return [4 /*yield*/, expect(createAppointment.execute({
+                            date: new Date(2020, 6, 27, 20),
+                            provider_id: '12321312',
+                            user_id: 'user',
+                        })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('should not be able to create an appointment with user_id equal to provider_id', function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    jest.spyOn(Date, 'now').mockImplementationOnce(function () {
+                        return new Date(2020, 6, 27, 16).getTime();
+                    });
+                    return [4 /*yield*/, expect(createAppointment.execute({
+                            date: new Date(2020, 6, 27, 17),
+                            provider_id: '12321312',
+                            user_id: '12321312',
+                        })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    it('should not be able to create an appointment before 8AM and after 5PM', function () { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    jest.spyOn(Date, 'now').mockImplementationOnce(function () {
+                        return new Date(2020, 6, 27, 16).getTime();
+                    });
+                    return [4 /*yield*/, expect(createAppointment.execute({
+                            date: new Date(2020, 6, 28, 7),
+                            provider_id: '12321312',
+                            user_id: '12321312',
+                        })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, expect(createAppointment.execute({
+                            date: new Date(2020, 6, 28, 18),
+                            provider_id: '12321312',
+                            user_id: '12321312',
+                        })).rejects.toBeInstanceOf(AppError_1.default)];
+                case 2:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });

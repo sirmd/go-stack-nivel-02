@@ -40,13 +40,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var FakeUsersRepository_1 = __importDefault(require("@modules/users/repositories/fakes/FakeUsersRepository"));
+var FakeCacheProvider_1 = __importDefault(require("@shared/providers/CacheProvider/fakes/FakeCacheProvider"));
 var ListProvidersService_1 = __importDefault(require("./ListProvidersService"));
 describe('ShowProfile', function () {
     var fakeUsersRepository;
     var listProviders;
+    var fakeCacheProvider;
     beforeEach(function () {
         fakeUsersRepository = new FakeUsersRepository_1.default();
-        listProviders = new ListProvidersService_1.default(fakeUsersRepository);
+        fakeCacheProvider = new FakeCacheProvider_1.default();
+        listProviders = new ListProvidersService_1.default(fakeUsersRepository, fakeCacheProvider);
     });
     it('should be able to list all the providers', function () { return __awaiter(void 0, void 0, void 0, function () {
         var user1, user2, user3, user, providers;

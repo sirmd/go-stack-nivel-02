@@ -55,74 +55,85 @@ describe('ListProviderAvailability', function () {
                 case 0: 
                 // Date considera o início dos dias/mês como sendo 0, então mês 4 é maio
                 return [4 /*yield*/, fakeAppointmentsRepository.create({
-                        provider_id: 'user',
+                        provider_id: 'provider',
+                        user_id: 'user',
                         date: new Date(2020, 4, 20, 8, 0, 0),
                     })];
                 case 1:
                     // Date considera o início dos dias/mês como sendo 0, então mês 4 é maio
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 9, 0, 0),
                         })];
                 case 2:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 10, 0, 0),
                         })];
                 case 3:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 11, 0, 0),
                         })];
                 case 4:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 12, 0, 0),
                         })];
                 case 5:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 13, 0, 0),
                         })];
                 case 6:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 14, 0, 0),
                         })];
                 case 7:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 15, 0, 0),
                         })];
                 case 8:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 16, 0, 0),
                         })];
                 case 9:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 20, 17, 0, 0),
                         })];
                 case 10:
                     _a.sent();
                     return [4 /*yield*/, fakeAppointmentsRepository.create({
-                            provider_id: 'user',
+                            provider_id: 'provider',
+                            user_id: 'user',
                             date: new Date(2020, 4, 21, 8, 0, 0),
                         })];
                 case 11:
                     _a.sent();
                     return [4 /*yield*/, listProviderAvailability.execute({
-                            provider_id: 'user',
+                            provider_id: 'provider',
                             year: 2020,
                             month: 5,
                         })];
@@ -131,7 +142,7 @@ describe('ListProviderAvailability', function () {
                     expect(availability).toEqual(expect.arrayContaining([
                         { day: 19, available: true },
                         { day: 20, available: false },
-                        { day: 21, available: false },
+                        { day: 21, available: true },
                         { day: 22, available: true },
                     ]));
                     return [2 /*return*/];

@@ -32,6 +32,15 @@ var Appointment = /** @class */ (function () {
         __metadata("design:type", User_1.default)
     ], Appointment.prototype, "provider", void 0);
     __decorate([
+        typeorm_1.Column('uuid'),
+        __metadata("design:type", String)
+    ], Appointment.prototype, "user_id", void 0);
+    __decorate([
+        typeorm_1.ManyToOne(function () { return User_1.default; }),
+        typeorm_1.JoinColumn({ name: 'user_id' }),
+        __metadata("design:type", User_1.default)
+    ], Appointment.prototype, "user", void 0);
+    __decorate([
         typeorm_1.Column('timestamp with time zone'),
         __metadata("design:type", Date)
     ], Appointment.prototype, "date", void 0);

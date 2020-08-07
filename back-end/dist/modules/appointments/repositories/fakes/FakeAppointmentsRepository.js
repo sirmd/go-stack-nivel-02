@@ -78,7 +78,7 @@ var FakeAppointmentsRepository = /** @class */ (function () {
             return __generator(this, function (_b) {
                 appointments = this.appointments.filter(function (appointment) {
                     return appointment.provider_id === provider_id &&
-                        date_fns_1.getDate(appointment.date) + 1 === day &&
+                        date_fns_1.getDate(appointment.date) === day &&
                         date_fns_1.getMonth(appointment.date) + 1 === month &&
                         date_fns_1.getYear(appointment.date) === year;
                 });
@@ -87,7 +87,7 @@ var FakeAppointmentsRepository = /** @class */ (function () {
         });
     };
     FakeAppointmentsRepository.prototype.create = function (_a) {
-        var provider_id = _a.provider_id, date = _a.date;
+        var provider_id = _a.provider_id, user_id = _a.user_id, date = _a.date;
         return __awaiter(this, void 0, void 0, function () {
             var appointment;
             return __generator(this, function (_b) {

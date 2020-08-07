@@ -57,7 +57,7 @@ var ListProviderDayAvailabilityService = /** @class */ (function () {
     ListProviderDayAvailabilityService.prototype.execute = function (_a) {
         var provider_id = _a.provider_id, month = _a.month, year = _a.year, day = _a.day;
         return __awaiter(this, void 0, void 0, function () {
-            var appointments, hourStart, eachHourArray, availability;
+            var appointments, hourStart, eachHourArray, currentDate, availability;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0: return [4 /*yield*/, this.appointmentsRepository.findAllInDayFromProvider({
@@ -70,11 +70,15 @@ var ListProviderDayAvailabilityService = /** @class */ (function () {
                         appointments = _b.sent();
                         hourStart = 8;
                         eachHourArray = Array.from({ length: 10 }, function (_, index) { return index + hourStart; });
+                        currentDate = new Date(Date.now());
                         availability = eachHourArray.map(function (hour) {
                             var hasAppointmentInHour = appointments.find(function (appointment) { return date_fns_1.getHours(appointment.date) === hour; });
+                            // Verifica se o horário disponível não está no passado, faz isso comparando
+                            // com a data-hora atual
+                            var compareDate = new Date(year, month - 1, day, hour);
                             return {
                                 hour: hour,
-                                available: !hasAppointmentInHour,
+                                available: !hasAppointmentInHour && date_fns_1.isAfter(compareDate, currentDate),
                             };
                         });
                         return [2 /*return*/, availability];

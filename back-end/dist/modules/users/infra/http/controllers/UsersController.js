@@ -41,6 +41,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tsyringe_1 = require("tsyringe");
 var CreateUserService_1 = __importDefault(require("@modules/users/services/CreateUserService"));
+var class_transformer_1 = require("class-transformer");
 var UsersController = /** @class */ (function () {
     function UsersController() {
     }
@@ -59,8 +60,7 @@ var UsersController = /** @class */ (function () {
                             })];
                     case 1:
                         user = _b.sent();
-                        delete user.password;
-                        return [2 /*return*/, response.json(user)];
+                        return [2 /*return*/, response.json(class_transformer_1.classToClass(user))];
                 }
             });
         });

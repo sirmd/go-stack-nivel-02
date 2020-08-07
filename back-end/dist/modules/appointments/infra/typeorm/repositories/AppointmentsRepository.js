@@ -70,13 +70,17 @@ var AppointmentsRepository = /** @class */ (function () {
         });
     };
     AppointmentsRepository.prototype.create = function (_a) {
-        var provider_id = _a.provider_id, date = _a.date;
+        var provider_id = _a.provider_id, date = _a.date, user_id = _a.user_id;
         return __awaiter(this, void 0, void 0, function () {
             var appointment;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        appointment = this.ormRepository.create({ provider_id: provider_id, date: date });
+                        appointment = this.ormRepository.create({
+                            provider_id: provider_id,
+                            date: date,
+                            user_id: user_id,
+                        });
                         return [4 /*yield*/, this.ormRepository.save(appointment)];
                     case 1:
                         _b.sent();

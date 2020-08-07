@@ -40,17 +40,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var AppError_1 = __importDefault(require("@shared/errors/AppError"));
+var FakeCacheProvider_1 = __importDefault(require("@shared/providers/CacheProvider/fakes/FakeCacheProvider"));
 var FakeUsersRepository_1 = __importDefault(require("../repositories/fakes/FakeUsersRepository"));
 var CreateUserService_1 = __importDefault(require("./CreateUserService"));
 var FakeHashProvider_1 = __importDefault(require("../providers/HashProvider/fakes/FakeHashProvider"));
 var fakeUsersRepository;
 var fakeHashProvider;
 var createUser;
+var fakeCacheProvider;
 describe('CreateUser', function () {
     beforeEach(function () {
         fakeUsersRepository = new FakeUsersRepository_1.default();
         fakeHashProvider = new FakeHashProvider_1.default();
-        createUser = new CreateUserService_1.default(fakeUsersRepository, fakeHashProvider);
+        fakeCacheProvider = new FakeCacheProvider_1.default();
+        createUser = new CreateUserService_1.default(fakeUsersRepository, fakeHashProvider, fakeCacheProvider);
     });
     it('should be able to create a new user', function () { return __awaiter(void 0, void 0, void 0, function () {
         var user;

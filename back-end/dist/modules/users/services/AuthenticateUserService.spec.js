@@ -42,24 +42,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var FakeUsersRepository_1 = __importDefault(require("../repositories/fakes/FakeUsersRepository"));
 var AuthenticateUserService_1 = __importDefault(require("./AuthenticateUserService"));
-var CreateUserService_1 = __importDefault(require("./CreateUserService"));
 var FakeHashProvider_1 = __importDefault(require("../providers/HashProvider/fakes/FakeHashProvider"));
 describe('AuthenticateUser', function () {
     var fakeUsersRepository;
     var fakeHashProvider;
-    var createUser;
     var authenticateUser;
     beforeEach(function () {
         fakeUsersRepository = new FakeUsersRepository_1.default();
         fakeHashProvider = new FakeHashProvider_1.default();
-        createUser = new CreateUserService_1.default(fakeUsersRepository, fakeHashProvider);
         authenticateUser = new AuthenticateUserService_1.default(fakeUsersRepository, fakeHashProvider);
     });
     it('should be able to authenticate', function () { return __awaiter(void 0, void 0, void 0, function () {
         var user, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, createUser.execute({
+                case 0: return [4 /*yield*/, fakeUsersRepository.create({
                         name: 'John Doe',
                         email: 'johndoe@example.com',
                         password: '123345',
@@ -98,7 +95,7 @@ describe('AuthenticateUser', function () {
     it('should not be able to authenticate with wrong password', function () { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, createUser.execute({
+                case 0: return [4 /*yield*/, fakeUsersRepository.create({
                         name: 'John Doe',
                         email: 'johndoe@example.com',
                         password: '123345',

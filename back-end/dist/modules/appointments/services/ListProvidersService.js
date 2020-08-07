@@ -47,15 +47,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var AppError_1 = __importDefault(require("@shared/errors/AppError"));
 var tsyringe_1 = require("tsyringe");
 var ListProvidersService = /** @class */ (function () {
-    function ListProvidersService(usersRepository) {
+    function ListProvidersService(usersRepository, cacheProvider) {
         this.usersRepository = usersRepository;
+        this.cacheProvider = cacheProvider;
     }
     ListProvidersService.prototype.execute = function (_a) {
         var user_id = _a.user_id;
@@ -63,13 +60,18 @@ var ListProvidersService = /** @class */ (function () {
             var users;
             return __generator(this, function (_b) {
                 switch (_b.label) {
-                    case 0: return [4 /*yield*/, this.usersRepository.findAllProvidersExcept(user_id)];
+                    case 0: return [4 /*yield*/, this.cacheProvider.recover("providers-list:" + user_id)];
                     case 1:
                         users = _b.sent();
-                        if (!users) {
-                            throw new AppError_1.default('User not found');
-                        }
-                        return [2 /*return*/, users];
+                        if (!!users) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.usersRepository.findAllProvidersExcept(user_id)];
+                    case 2:
+                        users = _b.sent();
+                        return [4 /*yield*/, this.cacheProvider.save("providers-list:" + user_id, users)];
+                    case 3:
+                        _b.sent();
+                        _b.label = 4;
+                    case 4: return [2 /*return*/, users];
                 }
             });
         });
@@ -77,7 +79,8 @@ var ListProvidersService = /** @class */ (function () {
     ListProvidersService = __decorate([
         tsyringe_1.injectable(),
         __param(0, tsyringe_1.inject('UsersRepository')),
-        __metadata("design:paramtypes", [Object])
+        __param(1, tsyringe_1.inject('CacheProvider')),
+        __metadata("design:paramtypes", [Object, Object])
     ], ListProvidersService);
     return ListProvidersService;
 }());
