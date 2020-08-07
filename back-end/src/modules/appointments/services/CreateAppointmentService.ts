@@ -3,6 +3,7 @@ import Appointment from '@modules/appointments/infra/typeorm/entities/Appointmen
 import AppError from '@shared/errors/AppError';
 import { inject, injectable } from 'tsyringe';
 import { INotificationsRepository } from '@modules/notifications/repositories/INotificationsRepository';
+import ICacheProvider from '@shared/providers/CacheProvider/models/ICacheProvider';
 import { IAppointmentsRepository } from '../repositories/IAppointmentsRepository';
 
 interface IRequestDTO {
@@ -18,6 +19,8 @@ class CreateAppointmentService {
     private appointmentsRepository: IAppointmentsRepository,
     @inject('NotificationsRepository')
     private notificationsRepository: INotificationsRepository,
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   public async execute({
@@ -59,6 +62,12 @@ class CreateAppointmentService {
       recipient_id: provider_id,
       content: `Novo agendamento para ${dateFormatted}`,
     });
+
+    const cacheKey = `provider-appointments:${provider_id}:${format(
+      appointmentDate,
+      'yyyy-M-d', // Grava o mês e dia menor que 10 com 1 caracter, pois o month e day são números
+    )}`;
+    await this.cacheProvider.invalidate(cacheKey);
 
     return appointment;
   }
