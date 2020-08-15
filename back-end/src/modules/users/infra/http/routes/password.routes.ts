@@ -22,7 +22,7 @@ passwordRouter.post(
     body: {
       token: Joi.string().uuid().required(),
       password: Joi.string().required(),
-      old_password: Joi.string().required().valid(Joi.ref('password')),
+      password_confirmation: Joi.string().required().valid(Joi.ref('password')),
     },
   }),
   resetPasswordController.create,
