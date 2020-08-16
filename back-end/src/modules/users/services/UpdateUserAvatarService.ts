@@ -2,6 +2,7 @@ import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import { inject, injectable } from 'tsyringe';
 import IStorageProvider from '@shared/providers/StorageProvider/models/IStorageProvider';
+import ICacheProvider from '@shared/providers/CacheProvider/models/ICacheProvider';
 import { IUsersRepository } from '../repositories/IUsersRepository';
 
 interface RequestDTO {
@@ -17,6 +18,9 @@ class UpdateUserAvatarService {
 
     @inject('StorageProvider')
     private storageProvider: IStorageProvider,
+
+    @inject('CacheProvider')
+    private cacheProvider: ICacheProvider,
   ) {}
 
   public async execute({ user_id, avatarFilename }: RequestDTO): Promise<User> {
@@ -33,6 +37,9 @@ class UpdateUserAvatarService {
     const fileName = await this.storageProvider.saveFile(avatarFilename);
 
     user.avatar = fileName;
+
+    await this.cacheProvider.invalidatePrefix('provider-appointments');
+    await this.cacheProvider.invalidatePrefix('providers-list');
 
     await this.usersRepository.save(user);
 
