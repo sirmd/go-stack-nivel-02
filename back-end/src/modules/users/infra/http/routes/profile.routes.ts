@@ -12,12 +12,14 @@ profileRouter.put(
   celebrate({
     body: Joi.object()
       .keys({
-        nome: Joi.string().required(),
+        name: Joi.string().required(),
         email: Joi.string().email().required(),
-        password: Joi.string().optional(),
-        old_password: Joi.string().optional().valid(Joi.ref('password')),
+        password: Joi.string(),
+        password_confirmation: Joi.string().valid(Joi.ref('password')),
+        old_password: Joi.string(),
       })
-      .with('password', 'old_password'),
+      .with('password', 'old_password')
+      .with('password', 'password_confirmation'),
   }),
   profileController.create,
 );
